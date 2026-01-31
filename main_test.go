@@ -96,3 +96,126 @@ func TestPower(t *testing.T) {
 		})
 	}
 }
+
+func TestMakeCounter(t *testing.T) {
+	tests := []struct {
+		name     string
+		start    int
+		calls    []int
+		expected []int
+	}{
+		{
+			name:     "Counter from 0",
+			start:    0,
+			calls:    []int{0, 0, 0},
+			expected: []int{1, 2, 3},
+		},
+		{
+			name:     "Counter from 100",
+			start:    100,
+			calls:    []int{0, 0},
+			expected: []int{101, 102},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			counter := MakeCounter(tt.start)
+			for i, _ := range tt.calls {
+				got := counter()
+				if got != tt.expected[i] {
+					t.Errorf("counter() = %v, want %v", got, tt.expected[i])
+				}
+			}
+		})
+	}
+}
+
+func TestMakeMultiplier(t *testing.T) {
+	tests := []struct {
+		name     string
+		factor   int
+		inputs   []int
+		expected []int
+	}{
+		{
+			name:     "Doubler",
+			factor:   2,
+			inputs:   []int{1, 2, 5},
+			expected: []int{2, 4, 10},
+		},
+		{
+			name:     "Tripler",
+			factor:   3,
+			inputs:   []int{2, 4},
+			expected: []int{6, 12},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mult := MakeMultiplier(tt.factor)
+			for i, input := range tt.inputs {
+				got := mult(input)
+				if got != tt.expected[i] {
+					t.Errorf("mult(%v) = %v, want %v", input, got, tt.expected[i])
+				}
+			}
+		})
+	}
+}
+
+func TestMakeAccumulator(t *testing.T) {
+	tests := []struct {
+		name       string
+		initial    int
+		operations []struct {
+			opType string
+			value  int
+		}
+		expected int
+	}{
+		{
+			name:    "Add and subtract",
+			initial: 100,
+			operations: []struct {
+				opType string
+				value  int
+			}{
+				{"add", 50},
+				{"subtract", 30},
+			},
+			expected: 120,
+		},
+		{
+			name:    "Multiple adds",
+			initial: 0,
+			operations: []struct {
+				opType string
+				value  int
+			}{
+				{"add", 10},
+				{"add", 5},
+				{"subtract", 3},
+			},
+			expected: 12,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			add, sub, get := MakeAccumulator(tt.initial)
+			for _, op := range tt.operations {
+				if op.opType == "add" {
+					add(op.value)
+				} else if op.opType == "subtract" {
+					sub(op.value)
+				}
+			}
+			got := get()
+			if got != tt.expected {
+				t.Errorf("accumulator final value = %v, want %v", got, tt.expected)
+			}
+		})
+	}
+}
