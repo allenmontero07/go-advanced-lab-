@@ -2,7 +2,9 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"math"
+	"os"
 )
 
 func factorial(n int) (int, error) {
@@ -117,4 +119,31 @@ func Compose(f func(int) int, g func(int) int) func(int) int {
 	return func(x int) int {
 		return f(g(x))
 	}
+}
+
+func ExploreProcess() {
+	fmt.Println("=== Process Information ===")
+
+	pid := os.Getpid()
+	fmt.Printf("Current Process ID: %d\n", pid)
+
+	ppid := os.Getppid()
+	fmt.Printf("Parent Process ID: %d\n", ppid)
+
+	data := []int{1, 2, 3, 4, 5}
+
+	fmt.Printf("Memory address of slice: %p\n", &data)
+
+	fmt.Printf("Memory address of first element: %p\n", &data[0])
+
+	fmt.Println("Note: Other processes cannot access these memory addresses due to process isolation.")
+	fmt.Println("Process IDs identify each running program, and each process has its own memory space.")
+	fmt.Println("The slice header stores metadata (length, capacity, pointer).")
+	fmt.Println("The element addresses are actual data locations in memory.")
+}
+
+func main() {
+
+	ExploreProcess()
+
 }
