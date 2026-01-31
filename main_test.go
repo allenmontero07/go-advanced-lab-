@@ -219,3 +219,118 @@ func TestMakeAccumulator(t *testing.T) {
 		})
 	}
 }
+
+func TestApply(t *testing.T) {
+	nums := []int{1, 2, 3, 4, 5}
+
+	tests := []struct {
+		name string
+		op   func(int) int
+		want []int
+	}{
+		{"square", func(x int) int { return x * x }, []int{1, 4, 9, 16, 25}},
+		{"double", func(x int) int { return x * 2 }, []int{2, 4, 6, 8, 10}},
+		{"negate", func(x int) int { return -x }, []int{-1, -2, -3, -4, -5}},
+		{"add 10", func(x int) int { return x + 10 }, []int{11, 12, 13, 14, 15}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Apply(nums, tt.op)
+			for i := range got {
+				if got[i] != tt.want[i] {
+					t.Errorf("Apply() = %v, want %v", got, tt.want)
+				}
+			}
+		})
+	}
+}
+
+func TestFilter(t *testing.T) {
+	nums := []int{1, 2, 3, 4, 5, 6, 12, 15}
+
+	tests := []struct {
+		name string
+		pred func(int) bool
+		want []int
+	}{
+		{"even numbers", func(x int) bool { return x%2 == 0 }, []int{2, 4, 6, 12}},
+		{"greater than 10", func(x int) bool { return x > 10 }, []int{12, 15}},
+		{"divisible by 3", func(x int) bool { return x%3 == 0 }, []int{3, 6, 12, 15}},
+		{"odd numbers", func(x int) bool { return x%2 != 0 }, []int{1, 3, 5, 15}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Filter(nums, tt.pred)
+			if len(got) != len(tt.want) {
+				t.Errorf("Filter() = %v, want %v", got, tt.want)
+				return
+			}
+			for i := range got {
+				if got[i] != tt.want[i] {
+					t.Errorf("Filter() = %v, want %v", got, tt.want)
+				}
+			}
+		})
+	}
+}
+
+func TestReduce(t *testing.T) {
+	nums := []int{1, 2, 3, 4, 5}
+
+	tests := []struct {
+		name string
+		init int
+		op   func(int, int) int
+		want int
+	}{
+		{"sum", 0, func(acc, cur int) int { return acc + cur }, 15},
+		{"product", 1, func(acc, cur int) int { return acc * cur }, 120},
+		{"max", nums[0], func(acc, cur int) int {
+			if cur > acc {
+				return cur
+			}
+			return acc
+		}, 5},
+		{"min", nums[0], func(acc, cur int) int {
+			if cur < acc {
+				return cur
+			}
+			return acc
+		}, 1},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Reduce(nums, tt.init, tt.op)
+			if got != tt.want {
+				t.Errorf("Reduce() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestCompose(t *testing.T) {
+	tests := []struct {
+		name  string
+		f     func(int) int
+		g     func(int) int
+		input int
+		want  int
+	}{
+		{"double then addTwo", func(x int) int { return x + 2 }, func(x int) int { return x * 2 }, 5, 12},
+		{"addTwo then double", func(x int) int { return x * 2 }, func(x int) int { return x + 2 }, 5, 14},
+		{"square then negate", func(x int) int { return -x }, func(x int) int { return x * x }, 3, -9},
+		{"negate then square", func(x int) int { return x * x }, func(x int) int { return -x }, 3, 9},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Compose(tt.f, tt.g)(tt.input)
+			if got != tt.want {
+				t.Errorf("Compose() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
