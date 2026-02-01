@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func factorial(n int) (int, error) {
+func Factorial(n int) (int, error) {
 
 	if n < 0 {
 		return 0, errors.New("factorial is not defined for negative numbers")
@@ -196,9 +196,139 @@ Escape Analysis Comments:
 - heapVar escapes to the heap because we return a pointer to it, which could live beyond the function's lifetime.
 - "Escapes to heap" means Go allocates the variable on the heap instead of stack, so it persists beyond the function call.
 */
-
 func main() {
 
+	// ===============================
+	// Part 4: Process Information
+	// ===============================
+	fmt.Println("=== Process Information ===")
 	ExploreProcess()
 
+	// ===============================
+	// Part 1: Math Operations
+	// ===============================
+	fmt.Println("\n=== Math Operations ===")
+
+	// Factorial
+	f0, _ := Factorial(0)
+	f5, _ := Factorial(5)
+	f10, _ := Factorial(10)
+
+	fmt.Println("Factorial(0) =", f0)
+	fmt.Println("Factorial(5) =", f5)
+	fmt.Println("Factorial(10) =", f10)
+
+	// IsPrime
+	p17, _ := IsPrime(17)
+	p20, _ := IsPrime(20)
+	p25, _ := IsPrime(25)
+
+	fmt.Println("IsPrime(17) =", p17)
+	fmt.Println("IsPrime(20) =", p20)
+	fmt.Println("IsPrime(25) =", p25)
+
+	// Power
+	pow1, _ := Power(2, 8)
+	pow2, _ := Power(5, 3)
+
+	fmt.Println("Power(2,8) =", pow1)
+	fmt.Println("Power(5,3) =", pow2)
+
+	// ===============================
+	// Part 2: Closures
+	// ===============================
+	fmt.Println("\n=== Closure Demonstration ===")
+
+	counter1 := MakeCounter(0)
+	counter2 := MakeCounter(100)
+
+	fmt.Println("Counter1:", counter1())
+	fmt.Println("Counter1:", counter1())
+	fmt.Println("Counter2:", counter2())
+	fmt.Println("Counter1:", counter1())
+
+	doubler := MakeMultiplier(2)
+	tripler := MakeMultiplier(3)
+
+	fmt.Println("Doubler(5):", doubler(5))
+	fmt.Println("Tripler(5):", tripler(5))
+
+	add, sub, get := MakeAccumulator(100)
+
+	add(50)
+	fmt.Println("Accumulator:", get())
+
+	sub(30)
+	fmt.Println("Accumulator:", get())
+
+	// ===============================
+	// Part 3: Higher-Order Functions
+	// ===============================
+	fmt.Println("\n=== Higher-Order Functions ===")
+
+	nums := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+	fmt.Println("Original:", nums)
+
+	squared := Apply(nums, func(x int) int {
+		return x * x
+	})
+	fmt.Println("Squared:", squared)
+
+	evens := Filter(nums, func(x int) bool {
+		return x%2 == 0
+	})
+	fmt.Println("Evens:", evens)
+
+	sum := Reduce(nums, 0, func(a, b int) int {
+		return a + b
+	})
+	fmt.Println("Sum:", sum)
+
+	double := func(x int) int {
+		return x * 2
+	}
+
+	addTen := func(x int) int {
+		return x + 10
+	}
+
+	composed := Compose(addTen, double)
+
+	fmt.Println("Compose (double then add 10):", composed(5))
+
+	// ===============================
+	// Part 5: Pointer Demonstration
+	// ===============================
+	fmt.Println("\n=== Pointer Demonstration ===")
+
+	num := 10
+
+	fmt.Println("Before DoubleValue:", num)
+	DoubleValue(num)
+	fmt.Println("After DoubleValue:", num, "(unchanged)")
+
+	fmt.Println("Before DoublePointer:", num)
+	DoublePointer(&num)
+	fmt.Println("After DoublePointer:", num, "(changed)")
+
+	a := 5
+	b := 10
+
+	fmt.Println("Before SwapValues: a =", a, "b =", b)
+	x, y := SwapValues(a, b)
+	fmt.Println("After SwapValues: a =", a, "b =", b, "(originals unchanged)")
+	fmt.Println("Returned:", x, y)
+
+	fmt.Println("Before SwapPointers: a =", a, "b =", b)
+	SwapPointers(&a, &b)
+	fmt.Println("After SwapPointers: a =", a, "b =", b)
+
+	// ===============================
+	// Escape Analysis Demo
+	// ===============================
+	fmt.Println("\n=== Escape Analysis ===")
+	AnalyzeEscape()
+
+	fmt.Println("\n=== Program Finished ===")
 }
