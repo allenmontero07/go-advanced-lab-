@@ -24,7 +24,7 @@ func TestFactorial(t *testing.T) {
 
 		t.Run(tt.name, func(t *testing.T) {
 
-			got, err := factorial(tt.input)
+			got, err := Factorial(tt.input)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Factorial() error = %v, wantErr %v", err, tt.wantErr)
