@@ -142,6 +142,61 @@ func ExploreProcess() {
 	fmt.Println("The element addresses are actual data locations in memory.")
 }
 
+func DoubleValue(x int) int {
+	x = x * 2
+	return x
+}
+
+// Comment: This function works on a copy of x, so the original variable stays unchanged
+
+func DoublePointer(x *int) {
+	*x = *x * 2
+}
+
+// Comment: This modifies the original variable because we are using a pointer
+
+func CreateOnStack() int {
+	x := 42
+	return x
+}
+
+// Comment: This variable stays on the stack, no escape
+
+func CreateOnHeap() *int {
+	x := 42
+	return &x
+}
+
+// Comment: This variable "escapes" to the heap because we are returning a pointer to it
+
+func SwapValues(a, b int) (int, int) {
+	return b, a
+}
+
+// Comment: Original variables in main remain unchanged
+
+func SwapPointers(a, b *int) {
+	*a, *b = *b, *a
+}
+
+// Comment: Original variables are modified because pointers are used
+
+func AnalyzeEscape() {
+	stackVar := CreateOnStack()
+	heapVar := CreateOnHeap()
+
+	fmt.Println("Stack variable value:", stackVar)
+	fmt.Println("Heap variable value:", *heapVar)
+}
+
+/*
+Escape Analysis Comments:
+
+- stackVar does NOT escape to the heap. It's created and used inside the function.
+- heapVar escapes to the heap because we return a pointer to it, which could live beyond the function's lifetime.
+- "Escapes to heap" means Go allocates the variable on the heap instead of stack, so it persists beyond the function call.
+*/
+
 func main() {
 
 	ExploreProcess()
